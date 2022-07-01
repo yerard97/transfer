@@ -1,0 +1,25 @@
+server:
+  port: 8087
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  application.name: transfer-service
+  profiles.active: dev
+  cloud:
+    config:
+      failFast: false
+      retry:
+        initiañInterval: 6000
+        multipler: 1.5
+        maxInterval: 30000
+      enabled: true
+      uri: http://localhost:8080
+      name: transfer-service
+      label: main
+      profile: dev
+#destino.servidor: 'test.rebex.net'
+#destino.puerto: 22
+#destino.usuario: 'demo'
+#destino.password: 'password'
+#destino.rsa: ''
