@@ -3,6 +3,7 @@ package com.dummy.transfer.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 /*
     Clase con la estructura de las configuraciones del  microservicio

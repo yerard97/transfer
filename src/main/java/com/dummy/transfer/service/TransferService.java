@@ -2,59 +2,70 @@ package com.dummy.transfer.service;
 
 import com.dummy.transfer.config.TransferConfig;
 import com.dummy.transfer.controller.TransferController;
+import com.dummy.transfer.utils.Utils;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.mime.encoding.Base64InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.NestedIOException;
 import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 import org.springframework.integration.sftp.session.SftpSession;
+import org.springframework.remoting.RemoteAccessException;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 @Service
 public class TransferService implements ITransferService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransferController.class);
 
-    SftpSession session;
-
     @Autowired
     TransferConfig config;
 
     @Override
-    public void enviarArchivo(){
+    public void enviarArchivo() throws IOException {
+        LOGGER.info("Inicia Service Enviar archivo");
+        InputStream file = Utils.getInputStreamFromBase64("V2VsY29tZSB0byBteSB0ZXN0");
+        try{
+            SftpSession session = sftpSessionFactory().getSession();
+            LOGGER.info("The Session is open:  "+ session.isOpen());
+
+            session.write(file, "/pub/example/readme.txt");
+            session.close();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+            throw new IOException(e);
+        }
 
     }
-
-    @Override
-    public void connectToSFTP(){
-        
-    }
-    /*
-        Metodo que se conecta a un servidor SFTP para relizar la descarga de un archivo
-        return byte[] archivo recuperado
+    /***
+     * Método que se conecta a un servidor SFTP para realizar la descarga de un archivo
+     * @return byte[] archivo recuperado
      */
     @Override
-    public byte[] downloadFile(){
+    public byte[] downloadFile() throws IOException {
         LOGGER.info("Inicia Service descarga de archivos");
+        SftpSession session = null;
         byte[] bytes = null;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try{
-            SftpSession session = sftpSessionFactory().getSession();
-            LOGGER.info("Is Conected "+ session.isOpen());
+            session = sftpSessionFactory().getSession();
+            LOGGER.info("The Session is open :" + session.isOpen());
             session.read("/pub/example/readme.txt", output);
             bytes = output.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            throw new IOException(e);
         }
+        session.close();
         return bytes;
     }
-    /*
-        Metodo que se encarga de crear la conexión  al servior SFTP , con los parametros dados
-        return Session Factory del sftp
+
+    /***
+     * Método que se encarga de crear la conexión al servidor SFTP, con los parámetros dados
+     * @return
      */
     public DefaultSftpSessionFactory sftpSessionFactory(){
         DefaultSftpSessionFactory defaultSftpSessionFactory = new DefaultSftpSessionFactory(true);

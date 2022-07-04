@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/archivos")
@@ -29,8 +31,8 @@ public class TransferController{
         @return Respuesta de la petición
      */
     @CrossOrigin
-    @PostMapping(value= "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> sendFile(@Valid @RequestBody DataFile dataFile){
+    @GetMapping(value= "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> dowloadFile(@Valid @RequestBody DataFile dataFile) throws IOException {
 
         LOGGER.info("Entra al controller descargar archivo {}", Encode.forJava(dataFile.toString()));
         byte[] response = transferService.downloadFile();
@@ -39,4 +41,13 @@ public class TransferController{
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(response);
    }
+    @CrossOrigin
+    @PostMapping(value= "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> sendFile(@Valid @RequestBody DataFile dataFile) throws IOException {
+
+        LOGGER.info("Entra al controller crear archivo {}", Encode.forJava(dataFile.toString()));
+        transferService.enviarArchivo();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("File save in server");
+    }
 }

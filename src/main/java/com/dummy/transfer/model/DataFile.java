@@ -4,6 +4,7 @@ package com.dummy.transfer.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -14,12 +15,15 @@ import java.io.Serializable;
 @Setter
 public class DataFile implements Serializable {
 
-    @NotNull
+    @NotNull(message = "Name is required")
+    @NotEmpty(message = "Name is required")
     String nombre;
 
-    @NotNull
+    @NotNull(message = "File is required")
+    @NotEmpty(message = "File is required")
     String base64;
 
-    @NotNull
+    @NotNull(message = "Ruta is required")
+    @NotEmpty(message = "Ruta is required")
     String ruta;
 }
