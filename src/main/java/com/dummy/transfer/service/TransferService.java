@@ -31,7 +31,6 @@ public class TransferService implements ITransferService {
         try{
             SftpSession session = sftpSessionFactory().getSession();
             LOGGER.info("The Session is open:  "+ session.isOpen());
-
             session.write(file, "/pub/example/readme.txt");
             session.close();
         } catch (IOException e) {
@@ -55,11 +54,12 @@ public class TransferService implements ITransferService {
             LOGGER.info("The Session is open :" + session.isOpen());
             session.read("/pub/example/readme.txt", output);
             bytes = output.toByteArray();
+            session.close();
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             throw new IOException(e);
         }
-        session.close();
+
         return bytes;
     }
 

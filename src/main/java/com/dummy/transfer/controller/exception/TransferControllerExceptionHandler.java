@@ -54,6 +54,12 @@ public class TransferControllerExceptionHandler {
         LOGGER.error("Error : {}", Encode.forJava(exception.toString()));
         return new ResponseEntity(exception.toString(), HttpStatus.BAD_REQUEST);
     }*/
+
+    /***
+     * Excepcion de argumentos
+     * @param ex
+     * @return
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
@@ -67,12 +73,16 @@ public class TransferControllerExceptionHandler {
         return errors;
     }
 
-
+    /***
+     *  Excepcion de entrada de archivos
+     * @param exception
+     * @return
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOExceptions(
             IOException exception) {
-        LOGGER.error("Error : {}", Encode.forJava(exception.toString()));
-        return new ResponseEntity(exception.toString(), HttpStatus.BAD_REQUEST);
+        LOGGER.error("Error : {}", Encode.forJava(exception.getMessage().toString()));
+        return new ResponseEntity(exception.getMessage().toString(), HttpStatus.BAD_REQUEST);
     }
 }
